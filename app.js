@@ -49,7 +49,7 @@ app.get('/inventory', (req, res) => {
 })
 
 //Delete item from inventory
-app.delete('/inventory:id', (req, res) => {
+app.delete('/inventory/:id', (req, res) => {
     let id = req.params.id;
     db.query(`DELETE FROM inventory WHERE id=${id}`)
         .then(results => {
@@ -59,7 +59,7 @@ app.delete('/inventory:id', (req, res) => {
 })
 
 //Update item info in inventory
-app.put('/inventory/:id', (req, res) => {
+app.post('/inventory/:id', (req, res) => {
     let id = req.params.id;
     db.query(`UPDATE FROM inventory WHERE id=${id}`)
         .then(results => {
@@ -76,11 +76,11 @@ app.post('/inventory', (req, res) => {
         VALUES ($1, $2, $3, $4, $5) RETURNING product_name, price`, [product_name, description, product_photo, price, quantity])
         .then(results => {
             console.log(results);
-            res.send('Success');
+            res.json({status: "Item added to inventory"});
         })
         .catch(err => {
             console.log(err);
-            res.send("Error");
+            res.json({status: "Item not added"});
         })
 })
 
@@ -91,4 +91,104 @@ app.get('/inventory/:id', (req, res) => {
         .then(results => {
             res.json(results);
         })
+})
+
+//Retrieves order history from one user
+app.get('/order-history/:users_id', (req, res) => {
+    let users_id = req.params.users_id;
+    db.query('SELECT * FROM order_history WHERE users_id=$1', [users_id])
+        .then(results => {
+            res.json(results);
+        }) 
+})
+
+//Retrieves specific order from one user
+app.get('/order-history/:users_id/:id', (req, res) => {
+    let { users_id, id } = req.params;
+    db.query('SELECT * FROM order_history WHERE users_id=$1 AND id=$2', [users_id, id])
+        .then(results => {
+            res.json(results);
+        }) 
+})
+
+//Payment
+app.post('/payment/')
+
+//Creates new user for web store
+app.post('/createuser', (req, res) => {
+    let { email, password } = req.body;
+    
+    if(!email || !password || email == '' || password == '') {
+        res.status(404).send("Please enter email and/or password")
+    }
+    else {
+        bcrypt.hash(password, saltRounds, (err, hash) => {
+            db.result('INSERT INTO users (email, password) VALUES ($1, $2)', 
+                [email, hash])
+                .then(result => {
+                    res.json({status: "User successfully registered"});
+                    console.log(result);
+                })
+                .catch(err => {
+                    res.status(404).send("Email already exists");
+                    console.log(err.detail);
+                })
+        })
+    }
+
+//Updates user info
+app.post('/update-user/:id', (req, res) => {
+    let id = req.params.id;
+    let { credit_card, street_address, apt_number, city, state, zip } = req.body;
+
+    db.result('UPDATE users SET credit_card=$1, street_address=$2, apt_number=$3, city=$4, state=$5, zip=$6 FROM users WHERE id=$7',
+    [credit_card, street_address, apt_number, city, state, zip, id])
+        .then(result => {
+            console.log(result);
+            res.json({status: "User info updated"});
+        })
+        .catch(err => {
+            res.json({status: "User not updated"});
+            console.log(err);
+        })
+})
+
+//POST YOUR LOGIN CREDENTIALS 
+/*app.post('/login', (req, res) => {
+    let user = req.body.email;
+    let password = req.body.password;
+    let userOnFile = db.one(`SELECT * FROM users WHERE email = '${req.body.email}'`);
+    let encryptedPass = encryptPassword(password);
+    if (user == '' || password == '') {
+      req.session.message = {
+        type: 'danger',
+        intro: 'Missing field!',
+        message: 'Please ensure you enter both an email and password!'
+      }
+      res.redirect('/login')
+    }
+    else {
+      db.one(
+        `SELECT * FROM users WHERE 
+  email = '${req.body.email}' AND 
+  password = '${encryptedPass}'`)
+        .then(function (response) {
+          console.log(response);
+          req.session.user = response;
+          return res.redirect('/users')
+        }).catch(function (error) {
+          console.log(error);
+          req.session.message = {
+            type: 'danger',
+            intro: 'Incorrect Password',
+            message: 'Please ensure you enter both an email and password!'
+          }
+          res.redirect('/login')
+        });
+    }
+  });*/
+
+
+
+
 })
