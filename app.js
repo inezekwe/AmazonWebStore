@@ -61,10 +61,12 @@ app.delete('/inventory/:id', (req, res) => {
 //Update item info in inventory
 app.post('/inventory/:id', (req, res) => {
     let id = req.params.id;
-    db.query(`UPDATE FROM inventory WHERE id=${id}`)
+    let { product_name, description, product_photo, price, quantity } = req.body;
+    db.result(`UPDATE inventory SET product_name=$1, description=$2, product_photo=$3, price=$4, quantity=$5 WHERE id=$6`,
+    [product_name, description, product_photo, price, quantity, id])
         .then(results => {
             console.log(results);
-            res.json(results);
+            res.json({status: "Item updated successfully"});
         })
 })
 
@@ -116,32 +118,33 @@ app.post('/payment/')
 
 //Creates new user for web store
 app.post('/createuser', (req, res) => {
-    let { email, password } = req.body;
+    let { email, password, credit_card, street_address, apt_number, city, state, zip } = req.body;
     
     if(!email || !password || email == '' || password == '') {
         res.status(404).send("Please enter email and/or password")
     }
     else {
         bcrypt.hash(password, saltRounds, (err, hash) => {
-            db.result('INSERT INTO users (email, password) VALUES ($1, $2)', 
-                [email, hash])
+            db.result(`INSERT INTO users (email, password, credit_card, street_address, apt_number, city, state, zip) 
+            VALUES ($1, $2, $3, $4, $5 ,$6, $7, $8)`, 
+                [email, hash, credit_card, street_address, apt_number, city, state, zip])
                 .then(result => {
                     res.json({status: "User successfully registered"});
                     console.log(result);
                 })
                 .catch(err => {
-                    res.status(404).send("Email already exists");
-                    console.log(err.detail);
+                    res.status(404).send("User not registered");
+                    console.log(err);
                 })
         })
     }
 
-//Updates user info
+/*Updates user info
 app.post('/update-user/:id', (req, res) => {
     let id = req.params.id;
     let { credit_card, street_address, apt_number, city, state, zip } = req.body;
 
-    db.result('UPDATE users SET credit_card=$1, street_address=$2, apt_number=$3, city=$4, state=$5, zip=$6 FROM users WHERE id=$7',
+    db.result('UPDATE users SET credit_card=$1, street_address=$2, apt_number=$3, city=$4, state=$5, zip=$6 WHERE id=$7',
     [credit_card, street_address, apt_number, city, state, zip, id])
         .then(result => {
             console.log(result);
@@ -151,7 +154,7 @@ app.post('/update-user/:id', (req, res) => {
             res.json({status: "User not updated"});
             console.log(err);
         })
-})
+})*/
 
 //POST YOUR LOGIN CREDENTIALS 
 /*app.post('/login', (req, res) => {
