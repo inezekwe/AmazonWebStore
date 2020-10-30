@@ -39,6 +39,14 @@ function Nav() {
             <span className="nav-option-line-two">& Orders</span>
           </div>
         </Link>
+
+         {/* 3rd link */}
+        <Link to="/register" className="nav-link">
+          <div className="nav-option">
+            <span className="nav-option-line-one">Register Today!</span>
+           
+          </div>
+        </Link>
        
         {/* 4th link */}
         <Link to="/checkout" className="nav-link">

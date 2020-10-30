@@ -6,6 +6,8 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Nav from "./Components/Nav/Nav";
 import MainPage from "../src/Components/MainPage/MainPage";
 import Login from "../src/Components/Login/Login";
+import Register from "../src/Components/Register/Register";
+import UserDetails from "../src/Components/UserDetails/UserDetails";
 
 function App() {
   return (
@@ -20,6 +22,10 @@ function App() {
           <Route path="/login">
             <Nav />
             <Login />
+          </Route>
+          <Route path="/register">
+            <Nav />
+            <UserDetails />
           </Route>
           <Route path="/">
             <Nav />

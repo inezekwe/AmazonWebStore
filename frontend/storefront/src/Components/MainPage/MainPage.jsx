@@ -1,8 +1,22 @@
 import React from "react";
 import "./Mainpage.css"
 import Products from "../Products/Products";
+import axios from "axios"
 
 function MainPage() {
+
+
+
+const allInventory = () => {
+        axios.get('http://localhost:4000/inventory')
+            .then(res => {
+                console.log(res.data);
+            })
+    }
+
+    console.log(allInventory())
+
+
     return (
         <div className="main-page">
             <img className="main-page-image" src="https://images.pexels.com/photos/994517/pexels-photo-994517.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260" alt="imageHolder" 

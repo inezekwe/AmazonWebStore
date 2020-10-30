@@ -1,9 +1,20 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../../Components/Products/Products.css";
+import axios from "axios"
+
 
 
 function Products({ id, title, image, price, rating }) {
-  
+
+const allInventory = () => {
+        axios.get('http://localhost:4000/inventory')
+            .then(res => {
+                console.log(res.data);
+            })
+    }
+
+
+
 
   return (
     <div className="products">
