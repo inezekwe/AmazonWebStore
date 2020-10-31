@@ -1,8 +1,11 @@
 const express = require("express");
 var bodyParser = require("body-parser");
 var pg = require("pg");
+var cors = require('cors');
 
 const app = express();
+app.use(cors());
+
 const bcrypt = require("bcrypt");
 //Used for adding extra security
 const saltRounds = 10;
@@ -61,9 +64,13 @@ app.delete("/inventory/:id", (req, res) => {
 //Update item info in inventory
 app.post("/inventory/:id", (req, res) => {
   let id = req.params.id;
-  db.query(`UPDATE FROM inventory WHERE id=${id}`).then((results) => {
-    console.log(results);
-    res.json(results);
+  let { product_name, description, product_photo, price, quantity } = req.body;
+
+  db.query(`UPDATE inventory SET product_name=$1, description=$2, product_photo=$3, price=$4, quantity=$5 WHERE id=$6`, 
+  [product_name, description, product_photo, price, quantity, id])
+    .then((results) => {
+      console.log(results);
+      res.json(results);
   });
 });
 
@@ -141,6 +148,38 @@ app.post("/createuser", (req, res) => {
     });
   }
 
+  //Logins user
+  app.post("/login", (req, res) => {
+    let { email, password } = req.body;
+
+    if(!email || !password || email == '' || password == '') {
+      res.status(404).send("Please enter email and/or password");
+    }
+    else {
+      db.query(`SELECT password FROM users WHERE email=$1`,[email])
+      .then(result => {
+       
+        if(result.length == 0) {
+            res.status(404).send("User does not exist in database");
+        }
+        else {
+            var stored_password = result[0].password;
+            
+            bcrypt.compare(password, stored_password, function(err, result) {
+                // result == true
+                if(result == true) {
+                    res.json({status : "User has successfully logged in"});
+                } else {
+                    res.status(404).send("Email/Password combination did not match");
+                }
+            });
+        }
+      });
+    }
+
+
+  })
+
   //Updates user info
   app.post("/update-user/:id", (req, res) => {
     let id = req.params.id;
@@ -154,7 +193,7 @@ app.post("/createuser", (req, res) => {
     } = req.body;
 
     db.result(
-      "UPDATE users SET credit_card=$1, street_address=$2, apt_number=$3, city=$4, state=$5, zip=$6 FROM users WHERE id=$7",
+      "UPDATE users SET credit_card=$1, street_address=$2, apt_number=$3, city=$4, state=$5, zip=$6 WHERE id=$7",
       [credit_card, street_address, apt_number, city, state, zip, id]
     )
       .then((result) => {
@@ -166,6 +205,7 @@ app.post("/createuser", (req, res) => {
         console.log(err);
       });
   });
+
 
   //POST YOUR LOGIN CREDENTIALS
   /*app.post('/login', (req, res) => {
