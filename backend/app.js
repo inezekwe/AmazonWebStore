@@ -1,7 +1,7 @@
 const express = require("express");
 var bodyParser = require("body-parser");
 var pg = require("pg");
-var cors = require('cors');
+var cors = require("cors");
 
 const app = express();
 app.use(cors());
@@ -48,6 +48,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
+
+//calling cors
+
+app.use(cors());
 
 app.listen(port, () => {
   console.log(`Web-store app listening at http://localhost:${port}`);
@@ -134,7 +138,7 @@ app.get("/order-history/:users_id/:id", (req, res) => {
 app.post("/payment/");
 
 //Creates new user for web store
-app.post("/createuser", (req, res) => {
+app.post("/register", (req, res) => {
   let { email, password } = req.body;
 
   if (!email || !password || email == "" || password == "") {

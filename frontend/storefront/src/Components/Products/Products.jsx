@@ -1,42 +1,41 @@
 import React from "react";
 import { useState } from "react";
 import "../../Components/Products/Products.css";
+import { useStateValue } from "../../StateManagement";
 
-
-function Products({ id, title, image, price, rating }) {
-  const [cart, addToCart] = useState([]);
-
-  const handleClick = () => {
-    addToCart([...cart, {id, title, price}]);
-    console.log(cart);
-  }
+function Product({ id, title, image, price, rating }) {
+  const [{ cart }, dispatch] = useStateValue();
+  const addToCart = () => {
+    //add item to cart
+    dispatch({
+      type: "ADD_TO_BASKET",
+      item: {
+        id: id,
+        title: title,
+        image: image,
+        price: price,
+        rating: rating,
+      },
+    });
+  };
 
   return (
-    <div className="products">
-      <div className="products-info">
+    <div className="product">
+      <div className="product-info">
         <p>{title}</p>
-        <p className="products-price">
+        <p className="product-price">
           <small>$</small>
           <strong>{price}</strong>
         </p>
-        <div className="products-rating">
-          {Array(rating)
-            .fill()
-            .map((_) => (
-              <p>
-                <img
-                  className="products-rating-stars"
-                  src="https://pixy.org/src/426/4262587.jpeg"
-                />
-              </p>
-            ))}
+        <div className="product-rating">
+          
         </div>
       </div>
 
       <img src={image} alt="image" />
-      <button onClick={handleClick}>Add to Cart</button>
+      <button onClick={addToCart}>Add to Cart</button>
     </div>
   );
 }
 
-export default Products;
+export default Product;

@@ -15,7 +15,6 @@ function MainPage() {
     }, [])
 
 
-
     return (
 
         <div className="main-page">
@@ -25,22 +24,20 @@ function MainPage() {
             {/* product id, title, price, rating, image */}
             
             <div className="main-page-row">
-            {inventory.map((item, index) => {
-                    return <Products key={item.id} id={item.id} title={item.product_name} price={item.price} image={item.product_photo}/>  
-            })}
-                
+                {inventory.map(item => {
+                    return <Products 
+                    key={item.id} 
+                    id={item.id} 
+                    image={item.product_photo} 
+                    title={item.product_name} 
+                    price={item.price} />
+                })}
                 <Products
                     id="1234523"
                     title="FEMALE CLOTHES"
                     image="https://images.pexels.com/photos/5210680/pexels-photo-5210680.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
                 />
-                <Products
-                    id="1234523"
-                    title="the start of web development by Bryan Urias"
-                    price={20.0}
-                    rating={5}
-                    image="https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781442499577/random-9781442499577_hr.jpg"
-               />
+               
             </div>
 
             <div className="main-page-row">
