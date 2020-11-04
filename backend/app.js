@@ -1,6 +1,7 @@
 const express = require("express");
 var bodyParser = require("body-parser");
 var pg = require("pg");
+var cors = require("cors");
 
 const app = express();
 const bcrypt = require("bcrypt");
@@ -19,11 +20,11 @@ const initOptions = {
 const config = {
   host: "lallah.db.elephantsql.com",
   port: 5432,
-  database: "pvzebtzx",
-  user: "pvzebtzx",
-  password: "HPT5rmRlxT_8pYdiLwDFyGyAghl4tvfQ",
+  database: "kcugdqzt",
+  user: "kcugdqzt",
+  password: "VK60MmMxP_kxDzgAOpINtghq4P64ATaK",
   url:
-    "postgres://pvzebtzx:HPT5rmRlxT_8pYdiLwDFyGyAghl4tvfQ@lallah.db.elephantsql.com:5432/pvzebtzx",
+    "postgres://kcugdqzt:VK60MmMxP_kxDzgAOpINtghq4P64ATaK@lallah.db.elephantsql.com:5432/kcugdqzt",
 };
 
 // Load and initialize pg-promise:
@@ -37,6 +38,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
+
+//calling cors
+
+app.use(cors());
 
 app.listen(port, () => {
   console.log(`Web-store app listening at http://localhost:${port}`);
@@ -119,7 +124,7 @@ app.get("/order-history/:users_id/:id", (req, res) => {
 app.post("/payment/");
 
 //Creates new user for web store
-app.post("/createuser", (req, res) => {
+app.post("/register", (req, res) => {
   let { email, password } = req.body;
 
   if (!email || !password || email == "" || password == "") {

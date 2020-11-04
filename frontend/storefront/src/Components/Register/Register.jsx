@@ -1,11 +1,13 @@
+import Axios from "axios";
 import React, { useState } from "react";
 
 function Register(props) {
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   
   const handleSubmit = (evt) => {
       evt.preventDefault();
-      alert(`Submitting Name ${name}`)
+      Axios.post("./register")
+      
   }
   return (
     <form onSubmit={handleSubmit}>
@@ -13,8 +15,8 @@ function Register(props) {
         First Name
         <input
           type="text"
-          value={name}
-          onChange={e => setName(e.target.value)}
+          value={email}
+          onChange={e => setEmail(e.target.value)}
         />
       </label>
       <input type="submit" value="Submit" />

@@ -3,9 +3,14 @@ import "../../Components/Nav/Nav.css";
 import { Link } from "react-router-dom";
 import SearchIcon from "@material-ui/icons/Search";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
+import { useStateValue } from "../../StateManagement"
 
 
 function Nav() {
+
+  const[{ cart }] = useStateValue();
+
+
 
   return (
     <nav>
@@ -56,7 +61,7 @@ function Nav() {
             {/* number of items in the basket */}
 
             <span className="nav-option-line-two nav-cart-count">
-             0
+             {cart.length}
             </span>
           </div>
         </Link>
