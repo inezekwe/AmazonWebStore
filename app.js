@@ -17,11 +17,11 @@ const initOptions = {
 const config = {
   host: "lallah.db.elephantsql.com",
   port: 5432,
-  database: "pvzebtzx",
-  user: "pvzebtzx",
-  password: "HPT5rmRlxT_8pYdiLwDFyGyAghl4tvfQ",
+  database: "kcugdqzt",
+  user: "kcugdqzt",
+  password: "VK60MmMxP_kxDzgAOpINtghq4P64ATaK",
   url:
-    "postgres://pvzebtzx:HPT5rmRlxT_8pYdiLwDFyGyAghl4tvfQ@lallah.db.elephantsql.com:5432/pvzebtzx",
+    "postgres://kcugdqzt:VK60MmMxP_kxDzgAOpINtghq4P64ATaK@lallah.db.elephantsql.com:5432/kcugdqzt",
 };
 
 // Load and initialize pg-promise:
@@ -39,7 +39,7 @@ app.use((req, res, next) => {
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
-app.use(bodyParser.json());
+app.use(bodyParser.json())
 
 app.listen(port, () => {
   console.log(`Web-store app listening at http://localhost:${port}`);
@@ -124,16 +124,19 @@ app.post("/payment/");
 //Creates new user for web store
 app.post("/register", (req, res) => {
   console.log("endpoint works!")
-  let { email, password,age } = req.body;
+  let { email, password, age } = req.body;
   
-  if (email == "" || password == "") {
+  if (email == "" || password == "" || age =="") {
     res.status(404).send("Please enter email and/or password")
   } 
-  else {
+  else 
+  {
     bcrypt.hash(password, saltRounds, (err, hash) => {
-      db.result("INSERT INTO users (email, password,age) VALUES ($1, $2, $3)", [
+      db.query("INSERT INTO users (email, password, age) VALUES ($1, $2, $3)", 
+      [
         email,
         hash,
+        age
       ])
         .then((result) => {
           res.json({ status: "User successfully registered" });
@@ -142,9 +145,9 @@ app.post("/register", (req, res) => {
         .catch((err) => {
           res.status(404).send("Email already exists");
           console.log(err.detail);
+        })
         });
-    });
-  }
+    }
       res.send("THIS IS WORKING!")
   });
 
@@ -160,7 +163,7 @@ app.post("/register", (req, res) => {
       zip,
     } = req.body;
 
-    db.result(
+    db.query(
       "UPDATE users SET credit_card=$1, street_address=$2, apt_number=$3, city=$4, state=$5, zip=$6 FROM users WHERE id=$7",
       [credit_card, street_address, apt_number, city, state, zip, id]
     )
@@ -175,37 +178,29 @@ app.post("/register", (req, res) => {
   });
 
   //POST YOUR LOGIN CREDENTIALS
-  *app.post('/login', (req, res) => {
-    let user = req.body.email;
-    let password = req.body.password;
-    let userOnFile = db.one(`SELECT * FROM users WHERE email = '${req.body.email}'`);
-    let encryptedPass = encryptPassword(password);
-    if (user == '' || password == '') {
-      req.session.message = {
-        type: 'danger',
-        intro: 'Missing field!',
-        message: 'Please ensure you enter both an email and password!'
-      }
-      res.redirect('/login')
+  app.post("/login", (req, res) => {
+    let { email, password } = req.body;
+    if(!email || !password || email == '' || password == '') {
+      res.status(404).send("Please enter email and/or password");
     }
     else {
-      db.one(
-        `SELECT * FROM users WHERE 
-  email = '${req.body.email}' AND 
-  password = '${encryptedPass}'`)
-        .then(function (response) {
-          console.log(response);
-          req.session.user = response;
-          return res.redirect('/users')
-        }).catch(function (error) {
-          console.log(error);
-          req.session.message = {
-            type: 'danger',
-            intro: 'Incorrect Password',
-            message: 'Please ensure you enter both an email and password!'
-          }
-          res.redirect('/login')
-        });
+      db.query(`SELECT email, password FROM users WHERE email=$1`, [email])
+      .then(result => {
+        console.log(result);
+        if(result.length == 0) {
+            res.status(404).send("User does not exist in database");
+        }
+        else {
+            var stored_password = result[0].password;
+            bcrypt.compare(password, stored_password, function(err, result) {
+                // result == true
+                if(result == true) {
+                    res.json({status : "User has successfully logged in"});
+                } else {
+                    res.status(404).send("Email/Password combination did not match");
+                }
+            });
+        }
+      });
     }
-  });*/
-// });
+  })
