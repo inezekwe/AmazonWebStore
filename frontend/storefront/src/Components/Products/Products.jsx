@@ -1,9 +1,15 @@
 import React from "react";
+import { useState } from "react";
 import "../../Components/Products/Products.css";
 
 
 function Products({ id, title, image, price, rating }) {
-  
+  const [cart, addToCart] = useState([]);
+
+  const handleClick = () => {
+    addToCart([...cart, {id, title, price}]);
+    console.log(cart);
+  }
 
   return (
     <div className="products">
@@ -28,7 +34,7 @@ function Products({ id, title, image, price, rating }) {
       </div>
 
       <img src={image} alt="image" />
-      <button>Add to Cart</button>
+      <button onClick={handleClick}>Add to Cart</button>
     </div>
   );
 }

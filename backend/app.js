@@ -19,14 +19,22 @@ const initOptions = {
   promiseLib: promise,
 };
 
+/*const config = {
+  host: "localhost",
+  port: 5432,
+  database: "web_store",
+  user: "web",
+  password: "web",
+};*/
+
 const config = {
   host: "lallah.db.elephantsql.com",
   port: 5432,
-  database: "pvzebtzx",
-  user: "pvzebtzx",
-  password: "HPT5rmRlxT_8pYdiLwDFyGyAghl4tvfQ",
+  database: "kcugdqzt",
+  user: "kcugdqzt",
+  password: "VK60MmMxP_kxDzgAOpINtghq4P64ATaK",
   url:
-    "postgres://pvzebtzx:HPT5rmRlxT_8pYdiLwDFyGyAghl4tvfQ@lallah.db.elephantsql.com:5432/pvzebtzx",
+    "postgres://kcugdqzt:VK60MmMxP_kxDzgAOpINtghq4P64ATaK@lallah.db.elephantsql.com:5432/kcugdqzt",
 };
 
 // Load and initialize pg-promise:
@@ -131,7 +139,8 @@ app.post("/createuser", (req, res) => {
 
   if (!email || !password || email == "" || password == "") {
     res.status(404).send("Please enter email and/or password");
-  } else {
+  } 
+  else {
     bcrypt.hash(password, saltRounds, (err, hash) => {
       db.result("INSERT INTO users (email, password) VALUES ($1, $2)", [
         email,
@@ -156,8 +165,9 @@ app.post("/createuser", (req, res) => {
       res.status(404).send("Please enter email and/or password");
     }
     else {
-      db.query(`SELECT password FROM users WHERE email=$1`,[email])
+      db.query(`SELECT email, password FROM users WHERE email=$1`, [email])
       .then(result => {
+        console.log(result);
        
         if(result.length == 0) {
             res.status(404).send("User does not exist in database");

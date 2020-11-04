@@ -15,6 +15,7 @@ function MainPage() {
     }, [])
 
 
+
     return (
 
         <div className="main-page">
@@ -22,10 +23,12 @@ function MainPage() {
             />
 
             {/* product id, title, price, rating, image */}
+            
             <div className="main-page-row">
-                {inventory.map(item => {
-                    return <Products key={item.id} id={item.id} title={item.product_name} price={item.price} />
-                })}
+            {inventory.map((item, index) => {
+                    return <Products key={item.id} id={item.id} title={item.product_name} price={item.price} image={item.product_photo}/>  
+            })}
+                
                 <Products
                     id="1234523"
                     title="FEMALE CLOTHES"
